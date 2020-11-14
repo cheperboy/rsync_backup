@@ -70,7 +70,7 @@ def long_date():
 
 def append_log(file, content):
   """ Append content to log file """
-  with open(file, 'a') as f:
+  with open(file, 'a+') as f:
     f.write(content + '\n')
   print(content)
 
@@ -175,8 +175,8 @@ def process_task(conf):
   try:
     # set additional variables for this task
     conf['trash'] = os.path.join(conf['dest'], TRASH_DIR)
-    conf['log']   = os.path.join(DIR, "log", "task_" +conf['name']+ ".log")
-    conf['date_success_log'] = os.path.join(DIR, "log", "task_" +conf['name']+ "_success.log")
+    conf['log']   = os.path.join(LOG_DIR, "task_" +conf['name']+ ".log")
+    conf['date_success_log'] = os.path.join(LOG_DIR, "task_" +conf['name']+ "_success.log")
     append_log(conf['log'], "\n" + long_date() + " Starting task " + conf['name'] + STR_DRY)
     
     if not prepare_task(conf):
