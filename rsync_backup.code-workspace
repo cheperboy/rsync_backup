@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../../var/log/rsync_backup"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/home/cheperboy/.virtualenvs/py3/bin/python3"
+	}
+}

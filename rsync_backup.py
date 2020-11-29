@@ -5,7 +5,19 @@
 # A task may defines "files_from". 
 # In this case a list of files/directory is provided in separate config file 
 
-# Log
+###################
+# Call the script #
+###################
+# Example Anacrontab entry below:
+# 1	10	backup_tasks	/home/cheperboy/.virtualenvs/py3/bin/python3 /home/cheperboy/script/rsync_backup/rsync_backup.py
+#
+# Console call:
+# workon py3
+# python /home/cheperboy/script/rsync_backup/rsync_backup.py
+# 
+#######
+# Log #
+#######
 # log is not done by rsync but by python program
 # "last.log"      Always up to date with list of tasks, last run, error count.
 # "prog_name.log" Program log with precise start/end timestamp of execution, error count
@@ -32,6 +44,7 @@
 # DEST       = /media/NAS/backup/some_files
 # MOUNTPOINT = /media/NAS/backup
 
+####################
 # Some rsync options
 # --size-only       
 #   saute les fichiers qui sont similaires par la date
