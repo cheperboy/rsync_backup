@@ -149,9 +149,13 @@ def rsync_standard(conf):
   return (cmd)
 
 def rsync_files_from(conf):
-  """rsync -av --files-from=file_list.txt / nas:backup/"""
+  """rsync -av --files-from=file_list.txt / nas:backup/
+  --no-owner --no-group --no-perms: dont' try to change permission/owner/group 
+    (avoid "rsync: chgrp failed: Operation not permitted")
+  """
   cmd = 'rsync \
 --archive \
+--no-owner --no-group --no-perms \
 --verbose \
 --progress \
 --delete \
