@@ -175,8 +175,13 @@ def prepare_task(conf):
   if VERBOSE:
     append_log(conf['log'], "\n" + show_task(conf))
   
-  if not (os.path.exists(conf['mountpoint']) and dir_is_reacheable(conf['mountpoint'])):
-    append_log(conf['log'], "Error: directory not reacheable" + conf['mountpoint'])
+# Test 27/12/2020: remplacer 'mountpoint' par 'dest' pour eviter ecriture sur serveur distant non accessible (en cas de probleme réseau ou problème de montage)
+# It works!
+# TODO: Ajouter option d'appel du script '-n --new' pour forcer l'écriture s'il s'agit d'une nouvelle tâche (dont le répertoire n'extiste pas encore sur le erveur de destination).
+#  if not (os.path.exists(conf['mountpoint']) and dir_is_reacheable(conf['mountpoint'])):
+#    append_log(conf['log'], "Error: directory not reacheable" + conf['mountpoint'])
+  if not (os.path.exists(conf['dest']) and dir_is_reacheable(conf['dest'])):
+    append_log(conf['log'], "Error: directory not reacheable" + conf['dest'])
     return False
   
   # Call rsync shell command   
