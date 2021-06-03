@@ -54,6 +54,10 @@
 #   utilisé avec l'option --backup, ceci dit à rsync de garder garder les fichiers supprimés dans le répertoire spécifié
 # 
 
+####################
+# https://www.jveweb.net/en/archives/2011/02/using-rsync-and-cron-to-automate-incremental-backups.html
+
+
 import configparser
 import sys
 import os
@@ -61,17 +65,23 @@ import subprocess
 from tabulate import tabulate # pretty print table
 from datetime import datetime, date
 
-# Get the directory where this program is located
-PROG_NAME     = "rsync_backup"
-DIR           = os.path.dirname(os.path.realpath(__file__))
-DEFAULT_CONF  = os.path.join("etc", "tasks.ini")
-TRASH_DIR     = ".rsync_trash/"
-VERBOSE       = None
-LOG_DIR       = "/var/log/"+PROG_NAME
-PROG_LOG      = os.path.join(LOG_DIR, __file__[:-2] + "log")
-LAST_LOG      = os.path.join(LOG_DIR, "last.log")
-LAST_LOG_DATE = os.path.join(LOG_DIR, "date.log")
+def short_date_filename():
+  today = date.today()
+  return(today.strftime("%Y_%m_%d"))
+  # today = datetime.now()
+  # return(today.strftime("%Y_%m_%d_%H_%M_%S"))
 
+# Get the directory where this program is located
+PROG_NAME      = "rsync_backup"
+DIR            = os.path.dirname(os.path.realpath(__file__))
+DEFAULT_CONF   = os.path.join("etc", "tasks.ini")
+TRASH_DIR      = ".rsync_trash_" + short_date_filename() + "/"
+TRASH_WILDCARD = ".rsync_trash_*"
+VERBOSE        = None
+LOG_DIR        = "/var/log/"+PROG_NAME
+PROG_LOG       = os.path.join(LOG_DIR, __file__[:-2] + "log")
+LAST_LOG       = os.path.join(LOG_DIR, "last.log")
+LAST_LOG_DATE  = os.path.join(LOG_DIR, "date.log")
 
 def short_date():
   today = date.today()
@@ -133,6 +143,9 @@ def check_file_list(filename):
     return out
 
 def rsync_standard(conf):
+  """
+  rsync -ab --backup-dir=old_`date +%F` --delete --exclude=old_* source/ dest/
+  """
   cmd = 'rsync \
 --recursive \
 -x --verbose \
@@ -140,10 +153,10 @@ def rsync_standard(conf):
 --delete \
 --size-only \
 --protect-args \
---exclude=@eaDir/ \
+--exclude=@eaDir/  \
 --filter "- lost+found/" --filter "- .cache/" \
 --backup --backup-dir='+conf['trash']+' \
---exclude='+conf['trash']+' \
+--exclude='+conf['trash_wildcard']+' \
 '+conf['source']+' \
 '+conf['dest']
   return (cmd)
@@ -162,7 +175,7 @@ def rsync_files_from(conf):
 --exclude=@eaDir/ \
 --filter "- lost+found/" --filter "- .cache/" \
 --backup --backup-dir='+conf['trash']+' \
---exclude='+conf['trash']+' \
+--exclude='+conf['trash_wildcard']+' \
 --files-from='+conf['files_from']+' \
 '+conf['source']+' \
 '+conf['dest']
@@ -180,8 +193,9 @@ def prepare_task(conf):
 # TODO: Ajouter option d'appel du script '-n --new' pour forcer l'écriture s'il s'agit d'une nouvelle tâche (dont le répertoire n'extiste pas encore sur le erveur de destination).
 #  if not (os.path.exists(conf['mountpoint']) and dir_is_reacheable(conf['mountpoint'])):
 #    append_log(conf['log'], "Error: directory not reacheable" + conf['mountpoint'])
+
   if not (os.path.exists(conf['dest']) and dir_is_reacheable(conf['dest'])):
-    append_log(conf['log'], "Error: directory not reacheable" + conf['dest'])
+    append_log(conf['log'], "Error: directory not reacheable " + conf['dest'])
     return False
   
   # Call rsync shell command   
@@ -196,8 +210,9 @@ def prepare_task(conf):
 def process_task(conf):
   try:
     # set additional variables for this task
-    conf['trash'] = os.path.join(conf['dest'], TRASH_DIR)
-    conf['log']   = os.path.join(LOG_DIR, "task_" +conf['name']+ ".log")
+    conf['trash']            = TRASH_DIR
+    conf['trash_wildcard']   = TRASH_WILDCARD
+    conf['log']              = os.path.join(LOG_DIR, "task_" +conf['name']+ ".log")
     conf['date_success_log'] = os.path.join(LOG_DIR, "task_" +conf['name']+ "_success.log")
     append_log(conf['log'], "\n" + long_date() + " Starting task " + conf['name'] + STR_DRY)
     
