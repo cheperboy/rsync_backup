@@ -1,5 +1,6 @@
 #!/home/cheperboy/.virtualenvs/py3/bin/python3
 
+# This program is a wrapper for rsync. made backup a local dir to a remote (or local) dir.
 # This progam reads a file "tasks.ini" and call rsync to make backup for each task
 # A task defines source dir, dest dir, mountpoint (directory to check if dest is recheable)
 # A task may defines "files_from". 
@@ -79,9 +80,10 @@ TRASH_DIR      = ".rsync_trash_" + short_date_filename() + "/"
 TRASH_WILDCARD = ".rsync_trash_*"
 VERBOSE        = None
 LOG_DIR        = "/var/log/"+PROG_NAME
-PROG_LOG       = os.path.join(LOG_DIR, __file__[:-2] + "log")
+PROG_LOG       = os.path.join(LOG_DIR, PROG_NAME + ".log")
 LAST_LOG       = os.path.join(LOG_DIR, "last.log")
 LAST_LOG_DATE  = os.path.join(LOG_DIR, "date.log")
+
 
 def short_date():
   today = date.today()
