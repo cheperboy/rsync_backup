@@ -1,4 +1,4 @@
-#!/home/cheperboy/.virtualenvs/py3/bin/python3
+#!/home/cheperboy/pyenvbkp/bin/python
 
 # This program is a wrapper for rsync. made backup a local dir to a remote (or local) dir.
 # This progam reads a file "tasks.ini" and call rsync to make backup for each task
@@ -6,11 +6,24 @@
 # A task may defines "files_from". 
 # In this case a list of files/directory is provided in separate config file 
 
+###########
+# Install #
+###########
+# Create NFS mountpoint
+# Client side
+# sudo chown user:group nfsdir/ 
+# sudo chmod 755 nfsdir/
+#
+# Create pyenv in ~/
+# python3 -m venv pyenvbkp
+# source ~/pyenvbkp/bin/activate
+# pip install tabulate
+#
 ###################
 # Call the script #
 ###################
 # Example Anacrontab entry below:
-# 1	10	backup_tasks	/home/cheperboy/.virtualenvs/py3/bin/python3 /home/cheperboy/script/rsync_backup/rsync_backup.py
+# 1	10	backup_tasks	/home/cheperboy/pyenvbkp/bin/python /home/cheperboy/rsync_backup/rsync_backup.py
 #
 # Console call:
 # workon py3
